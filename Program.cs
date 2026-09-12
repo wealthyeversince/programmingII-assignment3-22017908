@@ -138,6 +138,7 @@ healthApp.PrintPrescriptionsForPatient(1);
             app.Run();
         }
         
+        
     }
 }
 // QUESTION 2: Healthcare System
@@ -274,7 +275,27 @@ public class HealthSystemApp
         }
         WareHouseManager warehouse = new WareHouseManager();
 warehouse.RunDemo();
-    }
+Student student1 = new Student(1, "Kwame Mensah", 85);
+Student student2 = new Student(2, "Ama Boateng", 65);
+Student student3 = new Student(3, "Kofi Asante", 45);
+StudentResultProcessor processor = new StudentResultProcessor();
+
+List<Student> students = processor.ReadStudentsFromFile("students.txt");
+
+Console.WriteLine("\n--- Students From File ---");
+
+foreach (Student student in students)
+{
+    Console.WriteLine(
+        $"{student.FullName}: {student.Score} - Grade {student.GetGrade()}");
+}
+
+Console.WriteLine("\n--- Student Results ---");
+Console.WriteLine($"{student1.FullName}: {student1.Score} - Grade {student1.GetGrade()}");
+Console.WriteLine($"{student2.FullName}: {student2.Score} - Grade {student2.GetGrade()}");
+Console.WriteLine($"{student3.FullName}: {student3.Score} - Grade {student3.GetGrade()}");
+    processor.WriteReportToFile(students, "summary_report.txt");}
+    
 }
 public interface IInventoryItem
 {
@@ -466,5 +487,90 @@ public class WareHouseManager
         {
             Console.WriteLine($"Error: {ex.Message}");
         }
+    }
+}
+public class Student
+{
+    public int Id { get; set; }
+    public string FullName { get; set; }
+    public double Score { get; set; }
+
+    public Student(int id, string fullName, double score)
+    {
+        Id = id;
+        FullName = fullName;
+        Score = score;
+    }
+
+    public string GetGrade()
+    {
+        if (Score >= 80)
+            return "A";
+        else if (Score >= 70)
+            return "B";
+        else if (Score >= 60)
+            return "C";
+        else if (Score >= 50)
+            return "D";
+        else
+            return "F";
+    }
+}
+public class InvalidScoreFormatException : Exception
+{
+    public InvalidScoreFormatException(string message) : base(message)
+    {
+    }
+}
+
+public class MissingFieldException : Exception
+{
+    public MissingFieldException(string message) : base(message)
+    {
+    }
+}
+public class StudentResultProcessor
+{
+    public void WriteReportToFile(List<Student> students, string filePath)
+{
+    using (StreamWriter writer = new StreamWriter(filePath))
+    {
+        foreach (Student student in students)
+        {
+            writer.WriteLine(
+                $"ID: {student.Id}, Name: {student.FullName}, Score: {student.Score}, Grade: {student.GetGrade()}");
+        }
+    }
+}
+    public List<Student> ReadStudentsFromFile(string filePath)
+    {
+        List<Student> students = new List<Student>();
+
+        using (StreamReader reader = new StreamReader(filePath))
+        {
+            string? line;
+
+            while ((line = reader.ReadLine()) != null)
+            {
+             string[] fields = line.Split(',');
+
+if (fields.Length < 3)
+    throw new MissingFieldException("A student record is missing a field.");
+
+if (!int.TryParse(fields[0].Trim(), out int id))
+    throw new InvalidScoreFormatException("Invalid student ID.");
+
+if (!double.TryParse(fields[2].Trim(), out double score))
+    throw new InvalidScoreFormatException("Invalid score format.");
+
+if (score < 0 || score > 100)
+    throw new InvalidScoreFormatException("Score must be between 0 and 100.");
+
+Student student = new Student(id, fields[1].Trim(), score);
+students.Add(student);
+            }
+        }
+
+        return students;
     }
 }

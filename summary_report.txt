@@ -1,0 +1,4 @@
+ID: 1, Name: John Mensah, Score: 85, Grade: A
+ID: 2, Name: Ama Boateng, Score: 65, Grade: C
+ID: 3, Name: Kofi Asante, Score: 45, Grade: F
+ID: 4, Name: Abena Owusu, Score: 72, Grade: B

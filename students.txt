@@ -1,0 +1,4 @@
+1,John Mensah,85
+2,Ama Boateng,65
+3,Kofi Asante,45
+4,Abena Owusu,72
