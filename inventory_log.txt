@@ -1,0 +1,4 @@
+InventoryItem { Id = 1, Name = Laptop, Quantity = 10, DateAdded = 9/12/2026 6:42:52 PM }
+InventoryItem { Id = 2, Name = Phone, Quantity = 20, DateAdded = 9/12/2026 6:42:52 PM }
+InventoryItem { Id = 3, Name = Keyboard, Quantity = 15, DateAdded = 9/12/2026 6:42:52 PM }
+InventoryItem { Id = 4, Name = Mouse, Quantity = 25, DateAdded = 9/12/2026 6:42:52 PM }

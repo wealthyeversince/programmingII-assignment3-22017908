@@ -136,6 +136,17 @@ Console.WriteLine("\n--- Prescriptions for Patient 1 ---");
 healthApp.PrintPrescriptionsForPatient(1);
             FinanceApp app = new FinanceApp();
             app.Run();
+            InventoryApp inventoryApp = new InventoryApp();
+
+inventoryApp.SeedSampleData();
+
+Console.WriteLine("\n--- Inventory Before Saving ---");
+inventoryApp.PrintAllItems();
+
+inventoryApp.SaveData();
+
+Console.WriteLine("\n--- Loading Inventory From File ---");
+inventoryApp.LoadData();
         }
         
         
@@ -572,5 +583,93 @@ students.Add(student);
         }
 
         return students;
+    }
+}
+public interface IInventoryEntity
+{
+    int Id { get; }
+}
+public record InventoryItem(
+    int Id,
+    string Name,
+    int Quantity,
+    DateTime DateAdded
+) : IInventoryEntity;
+public class InventoryLogger<T> where T : IInventoryEntity
+{
+    private List<T> _log = new List<T>();
+    private string _filePath;
+
+    public InventoryLogger(string filePath)
+    {
+        _filePath = filePath;
+    }
+
+    public void Add(T item)
+    {
+        _log.Add(item);
+    }
+
+    public List<T> GetAll()
+    {
+        return _log;
+    }
+
+    public void SaveToFile()
+    {
+        using (StreamWriter writer = new StreamWriter(_filePath))
+        {
+            foreach (T item in _log)
+            {
+                writer.WriteLine(item);
+            }
+        }
+    }
+
+    public void LoadFromFile()
+    {
+        _log.Clear();
+
+        using (StreamReader reader = new StreamReader(_filePath))
+        {
+            string? line;
+
+            while ((line = reader.ReadLine()) != null)
+            {
+                Console.WriteLine(line);
+            }
+        }
+    }
+}
+public class InventoryApp
+{
+    private InventoryLogger<InventoryItem> _logger =
+        new InventoryLogger<InventoryItem>("inventory_log.txt");
+
+    public void SeedSampleData()
+    {
+        _logger.Add(new InventoryItem(1, "Laptop", 10, DateTime.Now));
+        _logger.Add(new InventoryItem(2, "Phone", 20, DateTime.Now));
+        _logger.Add(new InventoryItem(3, "Keyboard", 15, DateTime.Now));
+        _logger.Add(new InventoryItem(4, "Mouse", 25, DateTime.Now));
+    }
+
+    public void SaveData()
+    {
+        _logger.SaveToFile();
+    }
+
+    public void LoadData()
+    {
+        _logger.LoadFromFile();
+    }
+
+    public void PrintAllItems()
+    {
+        foreach (InventoryItem item in _logger.GetAll())
+        {
+            Console.WriteLine(
+                $"ID: {item.Id}, Name: {item.Name}, Quantity: {item.Quantity}, Date Added: {item.DateAdded}");
+        }
     }
 }
